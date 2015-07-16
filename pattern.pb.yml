@@ -1,0 +1,12 @@
+- hosts: ibm.*
+  tasks:
+    - name: I hope this only runs on ibm.ca and ibm.com
+      shell: echo {{ansible_hostname}}
+- hosts: 192.168.0.*
+  tasks:
+    - name: I hope this only runs on 192.168.0.[0-255]
+      shell: echo {{ansible_hostname}}
+- hosts: foo.*.ibm.ca
+  tasks:
+    - name: I hope this only runs on foo.bar.ibm.ca and foo.baz.ibm.ca and not foo.bar.baz.ibm.ca
+      shell: echo {{ansible_hostname}}

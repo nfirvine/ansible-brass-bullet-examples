@@ -1,0 +1,4 @@
+- hosts: [localhost]
+  tasks:
+    - shell: echo "{{ item }}"
+      with_items: '{{ range(10) }}'

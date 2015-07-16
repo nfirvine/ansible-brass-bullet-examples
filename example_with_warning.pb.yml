@@ -1,0 +1,35 @@
+- hosts: [localhost]
+  tasks:
+    - shell: 'false {{ item }}'
+      failed_when: false 
+      register: echo
+      with_items: ["foo", "bar"]
+    - name: Fail if return code is not 0
+      fail:
+        msg: "The command ({{ item.cmd }}) did not have a 0 return code"
+      when: item.rc != 0
+      with_items: "{{echo.results}}" 
+
+- hosts: [localhost]
+  tasks:
+    - name: init users
+      set_fact:
+        users: [sue, jim, bob]
+    - debug:
+        var: users
+    - name: here, 'users' contains the above list of employees
+      shell: echo {{item}} name={{ item[0] }} priv={{ item[1] }}.*:ALL append_privs=yes password=foo
+      with_nested:
+        - '{{users}}'
+        - [ 'clientdb', 'employeedb', 'providerdb' ]
+
+- hosts: [localhost]
+  tasks:
+  - name: Example of looping over a REMOTE command result
+    shell: "echo 'bananas\napples\npears'"
+    register: command_result
+
+  - name: Do something with each result
+    debug:
+      msg: 'I want {{ item }}!!!'
+    with_items: "command_result.stdout_lines"
